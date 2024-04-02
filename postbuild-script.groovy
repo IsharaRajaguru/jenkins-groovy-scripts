@@ -4,7 +4,6 @@ import groovy.json.JsonOutput
 import hudson.model.*
 import hudson.maven.*
 import hudson.tasks.*
-import jenkins.model.Jenkins
 import hudson.maven.reporters.*
 
 def build = manager.build
