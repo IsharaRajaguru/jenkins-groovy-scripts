@@ -18,7 +18,7 @@ def postToTeams(String messageJson) {
         if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
             println("Failed to send message to Teams: HTTP error code : " + connection.getResponseCode())
         } else {
-            println("Message sent to Teams successfully.")
+            println("Build Message sent to Teams successfully.")
         }
         
         connection.disconnect()
