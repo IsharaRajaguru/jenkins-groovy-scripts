@@ -114,7 +114,7 @@ def generateMessageJson(webHookUrl, jenkinsUrl, buildStatus, buildNumber, projec
                                 ],
                                 [
                                     title: "Duration:",
-                                    value: convertTime(previousBuildDetails.lastBuildDuration)
+                                    value: previousBuildDetails.lastBuildDuration
                                 ],
                                 [
                                     title: "Last Build Numer:",
@@ -206,7 +206,7 @@ def getPreviousBuildsDetails(jobName, webHookUrl, jenkinsUrl) {
         def lastFailedTime = lastFailedBuild ? lastFailedBuild.getTime().toString() : null
         def lastUnsuccessfulNumber = lastUnsuccessfulBuild ? lastUnsuccessfulBuild.getNumber() : null
         def lastUnsuccessfulTime = lastUnsuccessfulBuild ? lastUnsuccessfulBuild.getTime().toString() : null
-	long lastBuildDuration = System.currentTimeMillis() - lastBuild.getTimeInMillis()
+	long lastBuildDuration = covertTime(System.currentTimeMillis() - lastBuild.getTimeInMillis())
 
         if (lastBuild.getResult().toString() == "SUCCESS") {
             int i = 1
