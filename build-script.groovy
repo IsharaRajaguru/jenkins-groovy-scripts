@@ -52,9 +52,9 @@ def generateMessageJson(buildNumber, project, branch, jenkinsUrl) {
                                         ]
                                     ],
                                     width: "auto",
-									                  verticalContentAlignment: "Center"
+				    verticalContentAlignment: "Center"
                                 ],
-								                [
+				[
                                     type: "Column",
                                     items: [
                                         [
@@ -70,15 +70,15 @@ def generateMessageJson(buildNumber, project, branch, jenkinsUrl) {
                         ],
                         [
                             type: "TextBlock",
-                          	text: "Latest status of build #${buildNumber}. Click below to view details.",
+                            text: "Latest status of build #${buildNumber}. Click below to view details.",
                             wrap: true
                         ],
-						            [
-                        	type: "FactSet",
+			[
+                            type: "FactSet",
                             facts: [
                             	[
                                 	title: "Project:",
-                                    value: project
+                                    	value: project
                                 ],
                                 [
                                 	title: "Status:",
