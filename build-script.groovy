@@ -27,7 +27,7 @@ def postToTeams(String messageJson) {
     }
 }
 
-def generateMessageJson(buildNumber, project, branch, jenkinsUrl)
+def generateMessageJson(buildNumber, project, branch, jenkinsUrl) {
     
     def messageCard = [
         type: "message",
