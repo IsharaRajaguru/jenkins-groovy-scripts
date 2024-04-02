@@ -5,6 +5,7 @@ import hudson.model.*
 import hudson.maven.*
 import hudson.tasks.*
 import hudson.maven.reporters.*
+import jenkins.model.Jenkins
 
 def build = manager.build
 def envVars = build.getEnvironment(manager.listener)
