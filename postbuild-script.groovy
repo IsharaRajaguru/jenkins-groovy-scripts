@@ -114,7 +114,7 @@ def generateMessageJson(webHookUrl, jenkinsUrl, buildStatus, buildNumber, projec
                                 ],
                                 [
                                     title: "Duration:",
-                                    value: getBuildDuration().buildDurationFormatted
+                                    value: convertTime(previousBuildDetails.lastBuildDuration)
                                 ],
                                 [
                                     title: "Last Build Numer:",
@@ -165,11 +165,9 @@ def getBuildDuration() {
 
     // Get build start time and format it
     def buildStartTimeMillis = build.getTimeInMillis()
-    def buildStartTime = new Date(buildStartTimeMillis).toString()
  
     // Get build end time (if the build has completed) and format it
     def buildEndTimeMillis = System.currentTimeMillis()
-    def buildEndTime = new Date(System.currentTimeMillis()).toString()
  
     // Calculate build duration
     def buildDuration = buildEndTimeMillis - buildStartTimeMillis
@@ -184,8 +182,6 @@ def getBuildDuration() {
     def buildDurationFormatted = "${minutes} min ${seconds} sec"
  
     return [
-        buildStartTime: buildStartTime,
-        buildEndTime: buildEndTime,
         buildDurationFormatted: buildDurationFormatted,
     ]
 }
@@ -210,6 +206,7 @@ def getPreviousBuildsDetails(jobName, webHookUrl, jenkinsUrl) {
         def lastFailedTime = lastFailedBuild ? lastFailedBuild.getTime().toString() : null
         def lastUnsuccessfulNumber = lastUnsuccessfulBuild ? lastUnsuccessfulBuild.getNumber() : null
         def lastUnsuccessfulTime = lastUnsuccessfulBuild ? lastUnsuccessfulBuild.getTime().toString() : null
+	def lastBuildDuration = System.currentTimeMillis() - lastBuild.getTimeInMillis()
 
         if (lastBuild.getResult().toString() == "SUCCESS") {
             int i = 1
@@ -245,7 +242,8 @@ def getPreviousBuildsDetails(jobName, webHookUrl, jenkinsUrl) {
             lastSuccessNumber: lastSuccessNumber,
             lastSuccessTime: lastSuccessTime,
             lastFailedNumber: lastFailedNumber,
-            lastFailedTime: lastFailedTime
+            lastFailedTime: lastFailedTime,
+	    lastBuildDuration: lastBuildDuration,
         ]
     } else {
         e.printStackTrace()
@@ -254,7 +252,7 @@ def getPreviousBuildsDetails(jobName, webHookUrl, jenkinsUrl) {
 }
 
 def sendNotification(String jobName, String type, long timeMillis, int buildNumber, String webHookUrl, String jenkinsUrl) {
-    def message = "${jobName} - #${buildNumber} ${type} after ${getBuildDuration(timeMillis)}"
+    def message = "${jobName} - #${buildNumber} ${type} after ${covertTime(timeMillis)}"
 
     def messageCard = [
         type: "message",
@@ -317,27 +315,20 @@ def sendNotification(String jobName, String type, long timeMillis, int buildNumb
         ]
     ]
     def messageJson = JsonOutput.toJson(messageCard)
-
     postToTeams(messageJson, webHookUrl)
-    //return message
 }
 
+def covertTime(long buildTimeMillis) {
 
-
-def getBuildDuration(long buildTimeMillis) {
-    //def currentTimeMillis = System.currentTimeMillis()
-    def durationMillis = buildTimeMillis
-
-     // Convert build duration to seconds
-    def buildDurationInSeconds = durationMillis / 1000
+     // Convert build time to seconds
+    def buildTimeInSeconds = buildTimeMillis / 1000
 
     // Calculate minutes and remaining seconds
-    def minutes = buildDurationInSeconds.intValue() / 60
-    def seconds = buildDurationInSeconds.intValue() % 60
+    def minutes = buildTimeInSeconds.intValue() / 60
+    def seconds = buildTimeInSeconds.intValue() % 60
 
     return "${(int) minutes} min ${(int) seconds} sec"
 }
-
  
 unstableRegexes = manager.envVars["UNSTABLE_REGEXES"].tokenize(";")
 boolean isInfrastructureError = false
