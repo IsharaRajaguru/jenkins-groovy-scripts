@@ -37,7 +37,7 @@ def postToTeams(String messageJson, String webHookUrl) {
     }
 }
  
-def generateMessageJson(webHookUrl, jenkinsUrl, buildStatus, buildNumber, project, branch) {
+def generateMessageJson(webHookUrl, jenkinsUrl, buildStatus, buildNumber, project) {
     def successImage = [
         type: "Image",
         url: "https://knewton-public.s3.amazonaws.com/jenkins-images/jenkins-build-success.png",
@@ -354,5 +354,5 @@ if(manager.build.@result == hudson.model.Result.FAILURE) {
 }
  
 // Generate and send the message
-String messageJson = generateMessageJson(webHookUrl, jenkinsUrl, buildStatus, buildNumber, project, branch)
+String messageJson = generateMessageJson(webHookUrl, jenkinsUrl, buildStatus, buildNumber, project)
 postToTeams(messageJson, webHookUrl)
