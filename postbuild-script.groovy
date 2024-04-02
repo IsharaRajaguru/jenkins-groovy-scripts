@@ -206,7 +206,7 @@ def getPreviousBuildsDetails(jobName, webHookUrl, jenkinsUrl) {
         def lastFailedTime = lastFailedBuild ? lastFailedBuild.getTime().toString() : null
         def lastUnsuccessfulNumber = lastUnsuccessfulBuild ? lastUnsuccessfulBuild.getNumber() : null
         def lastUnsuccessfulTime = lastUnsuccessfulBuild ? lastUnsuccessfulBuild.getTime().toString() : null
-	long lastBuildDuration = covertTime(System.currentTimeMillis() - lastBuild.getTimeInMillis())
+	def lastBuildDuration = covertTime(System.currentTimeMillis() - lastBuild.getTimeInMillis())
 
         if (lastBuild.getResult().toString() == "SUCCESS") {
             int i = 1
