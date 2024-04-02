@@ -13,9 +13,7 @@ def envVars = build.getEnvironment(manager.listener)
 String webHookUrl = envVars['WEB_HOOK_URL']
 String jenkinsUrl = envVars['JENKINS_URL']
 String project = envVars['JOB_NAME']
-String branch = envVars['BRANCH_NAME']
 String buildStatus = manager.build.@result.toString()
-String duration = "00:05:23"
 int buildNumber = manager.build.number
  
 // Function to send POST request to the webhook URL
