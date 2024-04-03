@@ -159,32 +159,6 @@ def generateMessageJson(webHookUrl, jenkinsUrl, buildStatus, buildNumber, projec
     ]
     return JsonOutput.toJson(messageCard)
 }
- 
-def getBuildDuration() {
-    def build = manager.build
-
-    // Get build start time and format it
-    def buildStartTimeMillis = build.getTimeInMillis()
- 
-    // Get build end time (if the build has completed) and format it
-    def buildEndTimeMillis = System.currentTimeMillis()
- 
-    // Calculate build duration
-    def buildDuration = buildEndTimeMillis - buildStartTimeMillis
- 
-    // Convert build duration to seconds
-    def buildDurationInSeconds = buildDuration / 1000
- 
-    // Calculate minutes and remaining seconds
-    def minutes = buildDurationInSeconds.intValue() / 60
-    def seconds = buildDurationInSeconds.intValue() % 60
- 
-    def buildDurationFormatted = "${minutes} min ${seconds} sec"
- 
-    return [
-        buildDurationFormatted: buildDurationFormatted,
-    ]
-}
 
 def getPreviousBuildsDetails(jobName, webHookUrl, jenkinsUrl) {
     def job = Jenkins.instance.getItemByFullName(jobName)
@@ -320,14 +294,22 @@ def sendNotification(String jobName, String type, long timeMillis, int buildNumb
 
 def covertTime(long buildTimeMillis) {
 
-     // Convert build time to seconds
+    // Convert build time to seconds
     def buildTimeInSeconds = buildTimeMillis / 1000
 
-    // Calculate minutes and remaining seconds
-    def minutes = buildTimeInSeconds.intValue() / 60
-    def seconds = buildTimeInSeconds.intValue() % 60
+    // Calculate hours, minutes, and remaining seconds
+    def hours = buildTimeInSeconds.intValue() / 3600
+    def remainingSeconds = buildTimeInSeconds.intValue() % 3600
+    def minutes = remainingSeconds / 60
+    def seconds = remainingSeconds % 60
 
-    return "${(int) minutes} min ${(int) seconds} sec"
+    if(hours > 0) {
+        return "${(int) hours} hr ${(int) minutes} min ${(int) seconds} sec"
+    } else if(minutes > 0) {
+        return "${(int) minutes} min ${(int) seconds} sec"
+    } else {
+        return "${(int) seconds} sec"
+    }
 }
  
 unstableRegexes = manager.envVars["UNSTABLE_REGEXES"].tokenize(";")
