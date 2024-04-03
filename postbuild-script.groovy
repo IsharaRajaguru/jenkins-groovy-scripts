@@ -300,8 +300,8 @@ def covertTime(long buildTimeMillis) {
     // Calculate hours, minutes, and remaining seconds
     // def hours = buildTimeInSeconds.intValue() / 3600
     // def remainingSeconds = buildTimeInSeconds.intValue() % 3600
-    def minutes = remainingSeconds.intValue() / 60
-    def seconds = remainingSeconds.intValue() % 60
+    def minutes = buildTimeInSeconds.intValue() / 60
+    def seconds = buildTimeInSeconds.intValue() % 60
 
     // if(hours > 0) {
     //     return "${(int) hours} hr ${(int) minutes} min ${(int) seconds} sec"
