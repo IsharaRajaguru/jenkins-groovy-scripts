@@ -58,7 +58,6 @@ def generateMessageJson(webHookUrl, jenkinsUrl, buildStatus, buildNumber, projec
  
     def messageCard = [
         type: "message",
-	themeColor: '0072C6',
         attachments: [
             [
                 contentType: "application/vnd.microsoft.card.adaptive",
@@ -66,10 +65,6 @@ def generateMessageJson(webHookUrl, jenkinsUrl, buildStatus, buildNumber, projec
                 content: [
                     type: "AdaptiveCard",
                     body: [
-						[
-							type: "Container",
-                    		style: "attention"
-						],
                         [
                             type: "ColumnSet",
                             columns: [
