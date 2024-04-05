@@ -64,6 +64,7 @@ def generateMessageJson(webHookUrl, jenkinsUrl, buildStatus, buildNumber, projec
                 contentUrl: null,
                 content: [
                     type: "AdaptiveCard",
+					themeColor: '0072C6',
                     body: [
                         [
                             type: "ColumnSet",
