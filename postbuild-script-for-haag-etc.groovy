@@ -49,19 +49,17 @@ def analyzeBuildsDetails(String jobName, String webHookUrl, String jenkinsUrl) {
         if (currentBuild.getResult().toString() == "SUCCESS") {
             int i = 1
             def failureTime = 0
-            if(lastFailedBuild != null) {
-                if(currentBuildNumber-i == lastFailedBuild.getNumber()){
-                    failureTime = lastFailedBuild.getTimeInMillis()
+            if(lastFailedBuild && (currentBuildNumber-i == lastFailedBuild.getNumber())){
+                failureTime = lastFailedBuild.getTimeInMillis()
+                i = i+1
+                while((currentBuildNumber-i) > lastSuccessfulBuild.getNumber()) {
+                    Integer buildNumber = currentBuildNumber - I
+                    def specificBuild = job.getBuildByNumber(buildNumber)
+                    failureTime = specificBuild.getTimeInMillis()
                     i = i+1
-                    while((currentBuildNumber-i) > lastSuccessfulBuild.getNumber()) {
-                        Integer buildNumber = currentBuildNumber - I
-                        def specificBuild = job.getBuildByNumber(buildNumber)
-                        failureTime = specificBuild.getTimeInMillis()
-                        i = i+1
-                    }
+                }
                 def failureDuration = System.currentTimeMillis() - failureTime
                 sendNotification(jobName, "Back to normal", failureDuration, currentBuildNumber, webHookUrl, jenkinsUrl)
-                }
             }
         } else {
             int i=1
