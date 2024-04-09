@@ -98,7 +98,7 @@ def sendNotification(String jobName, String type, long timeMillis, int buildNumb
               "@type": "OpenUri",
               "name": "View Build Details",
               "targets": [
-                ["os": "default", "uri": "${jenkinsUrl}view/alta/job/${jobName}/${buildNumber}"]
+                ["os": "default", "uri": "${jenkinsUrl}job/${jobName}/${buildNumber}"]
               ]
             ]
           ]
