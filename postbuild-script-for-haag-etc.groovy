@@ -38,39 +38,41 @@ def postToTeams(String messageJson, String webHookUrl) {
 
 // Analyze the previous build details and call the sendNotification function according to the build statuses.
 def analyzeBuildsDetails(String jobName, String webHookUrl, String jenkinsUrl) {
-    def job = Jenkins.instance.getItemByFullName(jobName)
+    try {
+        def job = Jenkins.instance.getItemByFullName(jobName)
 
-    if (job) {
-        def currentBuild = job.getLastBuild()
-        def lastSuccessfulBuild = job.getLastSuccessfulBuild()
-        def lastFailedBuild = job.getLastFailedBuild()
-        def currentBuildNumber = currentBuild.getNumber()
- 
-        if (currentBuild.getResult().toString() == "SUCCESS") {
-            int i = 1
-            def failureTime = 0
-            if(lastFailedBuild && (currentBuildNumber-i == lastFailedBuild.getNumber())){
-                failureTime = lastFailedBuild.getTimeInMillis()
-                i = i+1
-                while((currentBuildNumber-i) > lastSuccessfulBuild.getNumber()) {
-                    Integer buildNumber = currentBuildNumber - I
-                    def specificBuild = job.getBuildByNumber(buildNumber)
-                    failureTime = specificBuild.getTimeInMillis()
+        if (job) {
+            def currentBuild = job.getLastBuild()
+            def lastSuccessfulBuild = job.getLastSuccessfulBuild()
+            def lastFailedBuild = job.getLastFailedBuild()
+            def currentBuildNumber = currentBuild.getNumber()
+     
+            if (currentBuild.getResult().toString() == "SUCCESS") {
+                int i = 1
+                def failureTime = 0
+                if(lastFailedBuild && (currentBuildNumber-i == lastFailedBuild.getNumber())){
+                    failureTime = lastFailedBuild.getTimeInMillis()
                     i = i+1
+                    while((currentBuildNumber-i) > lastSuccessfulBuild.getNumber()) {
+                        Integer buildNumber = currentBuildNumber - I
+                        def specificBuild = job.getBuildByNumber(buildNumber)
+                        failureTime = specificBuild.getTimeInMillis()
+                        i = i+1
+                    }
+                    def failureDuration = System.currentTimeMillis() - failureTime
+                    sendNotification(jobName, "Back to normal", failureDuration, currentBuildNumber, webHookUrl, jenkinsUrl)
                 }
-                def failureDuration = System.currentTimeMillis() - failureTime
-                sendNotification(jobName, "Back to normal", failureDuration, currentBuildNumber, webHookUrl, jenkinsUrl)
-            }
-        } else {
-            int i=1
-            def failureTime = 0
-            if(currentBuildNumber-i == lastSuccessfulBuild.getNumber()) {
-                failureTime = currentBuild.getTimeInMillis()
-                def failureDuration = System.currentTimeMillis() - failureTime
-                sendNotification(jobName, "Failure", failureDuration, currentBuildNumber, webHookUrl, jenkinsUrl)
+            } else {
+                int i=1
+                def failureTime = 0
+                if(currentBuildNumber-i == lastSuccessfulBuild.getNumber()) {
+                    failureTime = currentBuild.getTimeInMillis()
+                    def failureDuration = System.currentTimeMillis() - failureTime
+                    sendNotification(jobName, "Failure", failureDuration, currentBuildNumber, webHookUrl, jenkinsUrl)
+                }
             }
         }
-    } else {
+    } catch (Exception e) {
         e.printStackTrace()
     }
 }
