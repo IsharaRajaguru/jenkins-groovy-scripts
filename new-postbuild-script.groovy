@@ -84,33 +84,37 @@ def analyzeBuildsDetails(String jobName, String webHookUrl, String jenkinsUrl) {
 
 // Create message template and post the notifications to MS teams. 
 def sendNotification(String jobName, String type, long timeMillis, int buildNumber, String webHookUrl, String jenkinsUrl) {
-    def message = "**${jobName} - #${buildNumber} ${type} after ${convertTime(timeMillis)}**"
-    def alertEmoji = '🚨'
- 
-    def messageCard = [
-      "@type": "MessageCard",
-      "@context": "https://schema.org/extensions",
-      "themeColor": type == 'Back to normal' ? "00FF00": "D70000",
-      "summary": "Jenkins Build Notification",
-      "sections": [
-        [
-          "facts": [
-            ["name": alertEmoji, "value": message]
+    try {
+        def message = "**${jobName} - #${buildNumber} ${type} after ${convertTime(timeMillis)}**"
+        def alertEmoji = '🚨'
+     
+        def messageCard = [
+          "@type": "MessageCard",
+          "@context": "https://schema.org/extensions",
+          "themeColor": type == 'Back to normal' ? "00FF00": "D70000",
+          "summary": "Jenkins Build Notification",
+          "sections": [
+            [
+              "facts": [
+                ["name": alertEmoji, "value": message]
+              ]
+            ]
+          ],
+          "potentialAction": [
+            [
+              "@type": "OpenUri",
+              "name": "View Build Details",
+              "targets": [
+                ["os": "default", "uri": "${jenkinsUrl}view/alta/job/${jobName}/${buildNumber}"]
+              ]
+            ]
           ]
         ]
-      ],
-      "potentialAction": [
-        [
-          "@type": "OpenUri",
-          "name": "View Build Details",
-          "targets": [
-            ["os": "default", "uri": "${jenkinsUrl}view/alta/job/${jobName}/${buildNumber}"]
-          ]
-        ]
-      ]
-    ]
-    def messageJson = JsonOutput.toJson(messageCard)
-    postToTeams(messageJson, webHookUrl)
+        def messageJson = JsonOutput.toJson(messageCard)
+        postToTeams(messageJson, webHookUrl)
+    } catch (Exception e) {
+        e.printStackTrace()
+    }
 }
  
 /*def convertTime(long buildTimeMillis) {
@@ -134,21 +138,25 @@ def sendNotification(String jobName, String type, long timeMillis, int buildNumb
 
 // Function to convert build durations from milliseconds to hours, minutes and seconds
 def convertTime(long buildTimeMillis) {
-    // Convert build time to seconds with decimals
-    BigDecimal buildTimeInSeconds = BigDecimal.valueOf(buildTimeMillis).divide(BigDecimal.valueOf(1000), 1, BigDecimal.ROUND_HALF_UP)
-
-    // Calculate hours, minutes, and remaining seconds
-    def hours = buildTimeInSeconds.divide(BigDecimal.valueOf(3600), 0, BigDecimal.ROUND_DOWN)
-    def remainingSeconds = buildTimeInSeconds.remainder(BigDecimal.valueOf(3600))
-    def minutes = remainingSeconds.divide(BigDecimal.valueOf(60), 0, BigDecimal.ROUND_DOWN)
-    def seconds = remainingSeconds.remainder(BigDecimal.valueOf(60))
-
-    if(hours.intValue() > 0) {
-        return "${hours.intValue()} hr ${minutes.intValue()} min ${seconds.setScale(1, BigDecimal.ROUND_HALF_UP)} sec"
-    } else if(minutes.intValue() > 0) {
-        return "${minutes.intValue()} min ${seconds.setScale(1, BigDecimal.ROUND_HALF_UP)} sec"
-    } else {
-        return "${seconds.setScale(1, BigDecimal.ROUND_HALF_UP)} sec"
+    try {
+        // Convert build time to seconds with decimals
+        BigDecimal buildTimeInSeconds = BigDecimal.valueOf(buildTimeMillis).divide(BigDecimal.valueOf(1000), 1, BigDecimal.ROUND_HALF_UP)
+    
+        // Calculate hours, minutes, and remaining seconds
+        def hours = buildTimeInSeconds.divide(BigDecimal.valueOf(3600), 0, BigDecimal.ROUND_DOWN)
+        def remainingSeconds = buildTimeInSeconds.remainder(BigDecimal.valueOf(3600))
+        def minutes = remainingSeconds.divide(BigDecimal.valueOf(60), 0, BigDecimal.ROUND_DOWN)
+        def seconds = remainingSeconds.remainder(BigDecimal.valueOf(60))
+    
+        if(hours.intValue() > 0) {
+            return "${hours.intValue()} hr ${minutes.intValue()} min ${seconds.setScale(1, BigDecimal.ROUND_HALF_UP)} sec"
+        } else if(minutes.intValue() > 0) {
+            return "${minutes.intValue()} min ${seconds.setScale(1, BigDecimal.ROUND_HALF_UP)} sec"
+        } else {
+            return "${seconds.setScale(1, BigDecimal.ROUND_HALF_UP)} sec"
+        }
+    } catch (Exception e) {
+        e.printStackTrace()
     }
 }
 
