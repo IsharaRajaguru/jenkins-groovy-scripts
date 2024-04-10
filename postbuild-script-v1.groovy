@@ -137,3 +137,4 @@ def convertTime(long buildTimeMillis) {
 }
 
 analyzeBuildsDetails(project, webHookUrl, jenkinsUrl)
+
