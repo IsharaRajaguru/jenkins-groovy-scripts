@@ -54,7 +54,7 @@ def analyzeBuildsDetails(String jobName, String webHookUrl, String jenkinsUrl) {
                     failureTime = lastFailedBuild.getTimeInMillis()
                     i = i+1
                     while((currentBuildNumber-i) > lastSuccessfulBuild.getNumber()) {
-                        Integer buildNumber = currentBuildNumber - I
+                        Integer buildNumber = currentBuildNumber - i
                         def specificBuild = job.getBuildByNumber(buildNumber)
                         failureTime = specificBuild.getTimeInMillis()
                         i = i+1
