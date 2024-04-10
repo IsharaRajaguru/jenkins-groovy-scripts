@@ -112,20 +112,26 @@ def sendNotification(String jobName, String type, long timeMillis, int buildNumb
     }
 }
 
-// Function to convert build durations from milliseconds to hours, minutes and seconds
+// Function to convert build durations from milliseconds to days, hours, minutes and seconds
 def convertTime(long buildTimeMillis) {
     try {
         // Convert build time to seconds with decimals
         BigDecimal buildTimeInSeconds = BigDecimal.valueOf(buildTimeMillis).divide(BigDecimal.valueOf(1000), 1, BigDecimal.ROUND_HALF_UP)
     
-        // Calculate hours, minutes, and remaining seconds
-        def hours = buildTimeInSeconds.divide(BigDecimal.valueOf(3600), 0, BigDecimal.ROUND_DOWN)
-        def remainingSeconds = buildTimeInSeconds.remainder(BigDecimal.valueOf(3600))
-        def minutes = remainingSeconds.divide(BigDecimal.valueOf(60), 0, BigDecimal.ROUND_DOWN)
-        def seconds = remainingSeconds.remainder(BigDecimal.valueOf(60))
+        // Calculate days, hours, minutes, and remaining seconds
+        def days = buildTimeInSeconds.divide(BigDecimal.valueOf(86400), 0, BigDecimal.ROUND_DOWN)
+        def remainingSecondsAfterDays = buildTimeInSeconds.remainder(BigDecimal.valueOf(86400))
+
+        def hours = remainingSecondsAfterDays.divide(BigDecimal.valueOf(3600), 0, BigDecimal.ROUND_DOWN)
+        def remainingSecondsAfterHours = remainingSecondsAfterDays.remainder(BigDecimal.valueOf(3600))
+        
+        def minutes = remainingSecondsAfterHours.divide(BigDecimal.valueOf(60), 0, BigDecimal.ROUND_DOWN)
+        def seconds = remainingSecondsAfterHours.remainder(BigDecimal.valueOf(60))
     
-        if(hours.intValue() > 0) {
-            return "${hours.intValue()} hr ${minutes.intValue()} min ${seconds.setScale(1, BigDecimal.ROUND_HALF_UP)} sec"
+        if (days.intValue() > 0) {
+            return "${days.intValue()} day ${hours.intValue()} hr"
+        } else if(hours.intValue() > 0) {
+            return "${hours.intValue()} hr ${minutes.intValue()} min"
         } else if(minutes.intValue() > 0) {
             return "${minutes.intValue()} min ${seconds.setScale(1, BigDecimal.ROUND_HALF_UP)} sec"
         } else {
