@@ -65,7 +65,7 @@ def analyzeBuildsDetails(String jobName, String webHookUrl, String jenkinsUrl) {
             } else {
                 int i=1
                 def failureTime = 0
-                if(currentBuildNumber-i == lastSuccessfulBuild.getNumber()) {
+                if(lastSuccessfulBuild && (currentBuildNumber-i == lastSuccessfulBuild.getNumber())) {
                     failureTime = currentBuild.getTimeInMillis()
                     def failureDuration = System.currentTimeMillis() - failureTime
                     sendNotification(jobName, "Failure", failureDuration, currentBuildNumber, webHookUrl, jenkinsUrl)
