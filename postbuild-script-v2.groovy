@@ -26,7 +26,7 @@ def postToTeams(String messageJson, String webHookUrl) {
         connection.getOutputStream().flush()
         connection.getOutputStream().close()
         if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-            manager.listener.logger.println("Failed to send message to Teams: HTTP error code : " + connection.getResponseCode())
+            manager.listener.logger.println("Failed to send message to MS Teams... HTTP error code: ${connection.getResponseCode()}")
         } else {
             manager.listener.logger.println("PostBuild Message sent to MS Teams successfully.")
         }
