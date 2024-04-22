@@ -32,7 +32,7 @@ def postToTeams(String messageJson, String webHookUrl) {
         }
         connection.disconnect()
     } catch (Exception e) {
-        manager.listener.logger.println("Error occurred when sending the notifications to MS Teams... Calling postToTeams() function: ${e.getMessage()}")
+        manager.listener.logger.println("Error occurred when sending the notifications to MS Teams... When calling postToTeams(): ${e.getMessage()}")
     }
 }
 
@@ -51,12 +51,12 @@ def analyzeBuildsDetails(String jobName, String webHookUrl, String jenkinsUrl) {
                 int i = 1
                 def failureTime = 0
                 if(lastFailedBuild && (currentBuildNumber-i == lastFailedBuild.getNumber())){
-                    failureTime = lastFailedBuild.getTimeInMillis()
+                    failureTime = lastFailedBuild.getTimeInMillis() + lastFailedBuild.duration
                     i = i+1
                     while((currentBuildNumber-i) > lastSuccessfulBuild.getNumber()) {
                         Integer buildNumber = currentBuildNumber - i
                         def specificBuild = job.getBuildByNumber(buildNumber)
-                        failureTime = specificBuild.getTimeInMillis()
+                        failureTime = specificBuild.getTimeInMillis() + specificBuild.duration
                         i = i+1
                     }
                     def failureDuration = System.currentTimeMillis() - failureTime
@@ -73,7 +73,7 @@ def analyzeBuildsDetails(String jobName, String webHookUrl, String jenkinsUrl) {
             }
         }
     } catch (Exception e) {
-        manager.listener.logger.println("Error occurred when sending the notifications to MS Teams... Calling analyzeBuildsDetails() function: ${e.getMessage()}")
+        manager.listener.logger.println("Error occurred when sending the notifications to MS Teams... When calling analyzeBuildsDetails(): ${e.getMessage()}")
     }
 }
 
@@ -108,7 +108,7 @@ def sendNotification(String jobName, String type, long timeMillis, int buildNumb
         def messageJson = JsonOutput.toJson(messageCard)
         postToTeams(messageJson, webHookUrl)
     } catch (Exception e) {
-        manager.listener.logger.println("Error occurred when sending the notifications to MS Teams... Calling sendNotification() function: ${e.getMessage()}")
+        manager.listener.logger.println("Error occurred when sending the notifications to MS Teams... When calling sendNotification(): ${e.getMessage()}")
     }
 }
 
@@ -138,7 +138,7 @@ def convertTime(long buildTimeMillis) {
             return "${seconds.setScale(1, BigDecimal.ROUND_HALF_UP)} sec"
         }
     } catch (Exception e) {
-        manager.listener.logger.println("Error occurred when sending the notifications to MS Teams... Calling convertTime() function: ${e.getMessage()}")
+        manager.listener.logger.println("Error occurred when sending the notifications to MS Teams... When calling convertTime(): ${e.getMessage()}")
     }
 }
 
